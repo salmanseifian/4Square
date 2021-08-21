@@ -1,6 +1,7 @@
 package com.salmanseifian.foursquare.data.repository
 
 import com.salmanseifian.foursquare.data.remote.FSService
+import com.salmanseifian.foursquare.di.IoDispatcher
 import com.salmanseifian.foursquare.model.SearchVenuesResponse
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
@@ -11,7 +12,7 @@ import javax.inject.Inject
 
 class FSRepositoryImp @Inject constructor(
     private val fsService: FSService,
-    private val ioDispatcher: CoroutineDispatcher
+    @IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) : FSRepository {
 
 
