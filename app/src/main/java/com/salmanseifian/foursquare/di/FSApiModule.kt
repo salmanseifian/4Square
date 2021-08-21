@@ -1,4 +1,4 @@
-package com.salmanseifian.foursquare
+package com.salmanseifian.foursquare.di
 
 import com.salmanseifian.foursquare.data.remote.FSService
 import dagger.Module
