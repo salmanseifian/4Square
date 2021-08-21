@@ -10,5 +10,25 @@
         android:id="@+id/mapsFragment"
         android:name="com.salmanseifian.foursquare.ui.MapsFragment"
         android:label="fragment_maps"
-        tools:layout="@layout/fragment_maps" />
+        tools:layout="@layout/fragment_maps">
+        <action
+            android:id="@+id/action_mapsFragment_to_venueDetailsFragment"
+            app:destination="@id/venueDetailsFragment">
+
+            <argument
+                android:name="venueId"
+                app:argType="string" />
+        </action>
+    </fragment>
+
+    <fragment
+        android:id="@+id/venueDetailsFragment"
+        android:name="com.salmanseifian.foursquare.ui.VenueDetailsFragment"
+        android:label="venue_details_fragment"
+        tools:layout="@layout/venue_details_fragment" >
+        <argument
+            android:name="venueId"
+            app:argType="string" />
+
+    </fragment>
 </navigation>

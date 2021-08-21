@@ -23,7 +23,7 @@ class MapsViewModel @Inject constructor(private val fsRepository: FSRepository) 
     val isLoading: LiveData<Boolean> = _isLoading
 
 
-    private val allVenues = mutableSetOf<Venue>()
+    val allVenues = mutableSetOf<Venue>()
 
     fun onUserViewPortUpdated(bounds: LatLngBounds) {
         filterVenues(bounds)
@@ -52,7 +52,8 @@ class MapsViewModel @Inject constructor(private val fsRepository: FSRepository) 
                             _isLoading.value = false
 
                             result.getOrNull()?.let {
-                                _venues.value = it.response?.venues ?: emptyList()
+                                allVenues.addAll(it.response?.venues ?: emptyList())
+                                filterVenues(bounds)
                             }
                         }
 

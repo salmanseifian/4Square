@@ -19,6 +19,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat.checkSelfPermission
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.*
 import com.google.android.gms.maps.*
@@ -86,11 +87,12 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
         viewModel.venues.observe(viewLifecycleOwner, {
             map.clear()
             it.forEach { venue ->
-                map.addMarker(
+                val venueMarker = map.addMarker(
                     MarkerOptions()
                         .title(venue.name)
                         .position(LatLng(venue.location?.lat!!, venue.location.lng!!))
                 )
+                venueMarker.tag = venue.id
             }
 
         })
@@ -112,9 +114,20 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
             viewModel.onUserViewPortUpdated(map.projection.visibleRegion.latLngBounds)
         }
 
+        map.setOnMarkerClickListener {
+            findNavController().navigate(
+                MapsFragmentDirections.actionMapsFragmentToVenueDetailsFragment(
+                    it.tag as String
+                )
+            )
+            return@setOnMarkerClickListener true
+        }
+
         fetchLastLocation()
 
         checkLocationSetting()
+
+
     }
 
     @SuppressLint("MissingPermission")
