@@ -16,7 +16,7 @@ interface FSService {
         @Query("v") version: String = VERSION,
         @Query("categoryId") categoryId: String = FOOD_CATEGORY_ID,
         @Query("ll") ll: String
-    ): Response<SearchVenuesResponse>
+    ): SearchVenuesResponse
 
 
     companion object {
