@@ -21,14 +21,15 @@
         </action>
     </fragment>
 
-    <fragment
+    <dialog
         android:id="@+id/venueDetailsFragment"
         android:name="com.salmanseifian.foursquare.ui.VenueDetailsFragment"
         android:label="venue_details_fragment"
-        tools:layout="@layout/venue_details_fragment" >
+        tools:layout="@layout/venue_details_fragment">
+
         <argument
             android:name="venueId"
             app:argType="string" />
 
-    </fragment>
+    </dialog>
 </navigation>
