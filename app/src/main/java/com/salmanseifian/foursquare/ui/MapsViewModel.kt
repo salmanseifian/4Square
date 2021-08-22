@@ -22,7 +22,7 @@ class MapsViewModel @Inject constructor(private val fsRepository: FSRepository) 
     val venues: LiveData<List<Venue>> = _venues
 
 
-    private val _isLoading = MutableLiveData(true)
+    private val _isLoading = MutableLiveData(false)
     val isLoading: LiveData<Boolean> = _isLoading
 
     fun onUserViewPortUpdated(bounds: LatLngBounds) {
@@ -66,4 +66,5 @@ class MapsViewModel @Inject constructor(private val fsRepository: FSRepository) 
 
         }
     }
+
 }
