@@ -1,19 +1,15 @@
 package com.salmanseifian.foursquare.ui
 
-import android.Manifest
+import android.Manifest.permission.*
 import android.annotation.SuppressLint
-import android.content.IntentSender
 import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Build
 import android.os.Bundle
 import android.os.Looper
 import android.view.View
-import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat.checkSelfPermission
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -35,20 +31,12 @@ class MapsFragment : Fragment(R.layout.fragment_maps), OnMapReadyCallback {
     private val viewModel: MapsViewModel by activityViewModels()
     private var mapView: MapView? = null
     private lateinit var map: GoogleMap
+    private lateinit var locationCallback: LocationCallback
 
     private val fusedLocationClient by lazy {
         LocationServices.getFusedLocationProviderClient(requireActivity())
     }
 
-    private val locationCallback by lazy {
-        object : LocationCallback() {
-            override fun onLocationResult(locationResult: LocationResult?) {
-                locationResult ?: return
-                onNewLocation(locationResult.locations.first())
-                stopLocationUpdates()
-            }
-        }
-    }
 
     private fun locationRequest(): LocationRequest {
         return LocationRequest.create().apply {
@@ -63,6 +51,15 @@ class MapsFragment : Fragment(R.layout.fragment_maps), OnMapReadyCallback {
         LocationSettingsRequest.Builder()
             .addLocationRequest(locationRequest())
     }
+
+    private val requestMultiplePermissions =
+        registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
+            if (permissions[ACCESS_FINE_LOCATION] == true && permissions[ACCESS_COARSE_LOCATION] == true) {
+                fetchLastLocation()
+            } else {
+                showPermissionAlert()
+            }
+        }
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -99,6 +96,14 @@ class MapsFragment : Fragment(R.layout.fragment_maps), OnMapReadyCallback {
             }
         }
 
+        locationCallback = object : LocationCallback() {
+            override fun onLocationResult(locationResult: LocationResult?) {
+                locationResult ?: return
+                onNewLocation(locationResult.locations.first())
+                stopLocationUpdates()
+            }
+        }
+
     }
 
     override fun onMapReady(map: GoogleMap) {
@@ -129,10 +134,10 @@ class MapsFragment : Fragment(R.layout.fragment_maps), OnMapReadyCallback {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (checkSelfPermission(
                     requireContext(),
-                    Manifest.permission.ACCESS_FINE_LOCATION
+                    ACCESS_FINE_LOCATION
                 ) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(
                     requireContext(),
-                    Manifest.permission.ACCESS_COARSE_LOCATION
+                    ACCESS_COARSE_LOCATION
                 ) != PackageManager.PERMISSION_GRANTED
             ) {
                 showPermissionAlert()
@@ -151,24 +156,7 @@ class MapsFragment : Fragment(R.layout.fragment_maps), OnMapReadyCallback {
     }
 
     private fun showPermissionAlert() {
-        if (ActivityCompat.checkSelfPermission(
-                requireContext(),
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
-            && ActivityCompat.checkSelfPermission(
-                requireContext(),
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            ActivityCompat.requestPermissions(
-                requireActivity(),
-                arrayOf(
-                    Manifest.permission.ACCESS_COARSE_LOCATION,
-                    Manifest.permission.ACCESS_FINE_LOCATION
-                ),
-                123
-            )
-        }
+        requestMultiplePermissions.launch(arrayOf(ACCESS_FINE_LOCATION, ACCESS_COARSE_LOCATION))
     }
 
 
@@ -201,29 +189,7 @@ class MapsFragment : Fragment(R.layout.fragment_maps), OnMapReadyCallback {
             })
         task.addOnFailureListener(requireActivity()) { e ->
             if (e is ResolvableApiException) {
-                val builder = AlertDialog.Builder(requireActivity())
-                builder.setTitle("Continiuos Location Request")
-                builder.setMessage("This request is essential to get location update continiously")
-                builder.create()
-                builder.setPositiveButton(
-                    "OK"
-                ) { _, _ ->
-                    try {
-                        e.startResolutionForResult(requireActivity(), REQUEST_CHECK_SETTINGS)
-                    } catch (e1: IntentSender.SendIntentException) {
-                        e1.printStackTrace()
-                    }
-                }
-                builder.setNegativeButton(
-                    "Cancel"
-                ) { _, _ ->
-                    Toast.makeText(
-                        requireContext(),
-                        "Location update permission not granted",
-                        Toast.LENGTH_LONG
-                    ).show()
-                }
-                builder.show()
+                e.startResolutionForResult(requireActivity(), REQUEST_CHECK_SETTINGS)
             }
         }
     }
@@ -233,9 +199,9 @@ class MapsFragment : Fragment(R.layout.fragment_maps), OnMapReadyCallback {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (checkSelfPermission(
                     requireContext(),
-                    Manifest.permission.ACCESS_FINE_LOCATION
+                    ACCESS_FINE_LOCATION
                 ) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(
-                    requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION
+                    requireContext(), ACCESS_COARSE_LOCATION
                 ) != PackageManager.PERMISSION_GRANTED
             ) {
                 showPermissionAlert()
@@ -246,34 +212,6 @@ class MapsFragment : Fragment(R.layout.fragment_maps), OnMapReadyCallback {
             locationCallback,
             Looper.getMainLooper()
         )
-    }
-
-
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<String?>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        when (requestCode) {
-            123 -> {
-                if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
-                    showPermissionAlert()
-                } else {
-                    if (ActivityCompat.checkSelfPermission(
-                            requireContext(),
-                            Manifest.permission.ACCESS_FINE_LOCATION
-                        ) == PackageManager.PERMISSION_GRANTED
-                        && ActivityCompat.checkSelfPermission(
-                            requireContext(),
-                            Manifest.permission.ACCESS_COARSE_LOCATION
-                        ) == PackageManager.PERMISSION_GRANTED
-                    ) {
-                        fetchLastLocation()
-                    }
-                }
-            }
-        }
     }
 
 
