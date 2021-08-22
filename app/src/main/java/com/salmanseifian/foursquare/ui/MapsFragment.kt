@@ -8,9 +8,7 @@ import android.location.Location
 import android.os.Build
 import android.os.Bundle
 import android.os.Looper
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
@@ -18,7 +16,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat.checkSelfPermission
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.*
@@ -28,12 +26,13 @@ import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.tasks.OnSuccessListener
 import com.google.android.gms.tasks.Task
 import com.salmanseifian.foursquare.R
+import com.salmanseifian.foursquare.databinding.FragmentMapsBinding
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class MapsFragment : Fragment(), OnMapReadyCallback {
+class MapsFragment : Fragment(R.layout.fragment_maps), OnMapReadyCallback {
 
-    private val viewModel: MapsViewModel by viewModels()
+    private val viewModel: MapsViewModel by activityViewModels()
     private var mapView: MapView? = null
     private lateinit var map: GoogleMap
 
@@ -65,18 +64,13 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
             .addLocationRequest(locationRequest())
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_maps, container, false)
-    }
-
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val mapView = view.findViewById<MapView>(R.id.mapView)
+        val binding = FragmentMapsBinding.bind(view)
+
+        val mapView = binding.mapView
         mapView.onCreate(savedInstanceState)
         mapView.onResume()
 

@@ -16,14 +16,14 @@ import javax.inject.Inject
 @HiltViewModel
 class MapsViewModel @Inject constructor(private val fsRepository: FSRepository) : ViewModel() {
 
+    val allVenues = mutableSetOf<Venue>()
+
     private val _venues = MutableLiveData<List<Venue>>()
     val venues: LiveData<List<Venue>> = _venues
 
+
     private val _isLoading = MutableLiveData(true)
     val isLoading: LiveData<Boolean> = _isLoading
-
-
-    val allVenues = mutableSetOf<Venue>()
 
     fun onUserViewPortUpdated(bounds: LatLngBounds) {
         filterVenues(bounds)
