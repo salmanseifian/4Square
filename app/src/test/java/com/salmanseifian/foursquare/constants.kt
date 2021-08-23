@@ -13,6 +13,15 @@ val sampleLatLngBounds = LatLngBounds(
     )
 )
 
+val sampleNearLatLng = "35.77606198344144,51.39690387994051"
+
+val sampleNearLatLngBounds = LatLngBounds(
+    LatLng(35.76704409734948, 51.38917911797762),
+    LatLng(
+        35.78507986953339, 51.4046286419034
+    )
+)
+
 
 val sampleJsonResponse = """
     {

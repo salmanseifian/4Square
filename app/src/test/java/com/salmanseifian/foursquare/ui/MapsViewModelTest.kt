@@ -19,6 +19,7 @@ import org.mockito.Mockito.doReturn
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
+import java.net.SocketTimeoutException
 
 class MapsViewModelTest {
 
@@ -32,7 +33,6 @@ class MapsViewModelTest {
 
     private val venuesObserver = mock<Observer<List<Venue>>>()
     private val loadingObserver = mock<Observer<Boolean>>()
-
 
     private lateinit var viewModel: MapsViewModel
 
@@ -71,7 +71,68 @@ class MapsViewModelTest {
         verify(loadingObserver).onChanged(false)
         verify(venuesObserver).onChanged(sampleVenues)
 
+    }
 
+
+    @Test
+    fun `should emit from cache on inbounds location`() = rule.dispatcher.runBlockingTest {
+
+        val result = Result.success(response())
+
+        val channel = Channel<Result<SearchVenuesResponse>>()
+        val flow = channel.consumeAsFlow()
+
+        doReturn(flow)
+            .`when`(fsRepository)
+            .searchVenues(sampleLatLng)
+
+        launch {
+            channel.send(result)
+        }
+
+        viewModel.onUserViewPortUpdated(sampleLatLngBounds)
+
+        verify(fsRepository, times(1)).searchVenues(sampleLatLng)
+
+
+        verify(loadingObserver).onChanged(false)
+        verify(venuesObserver).onChanged(sampleVenues)
+
+        viewModel.onUserViewPortUpdated(sampleNearLatLngBounds)
+
+        verify(fsRepository, times(1)).searchVenues(sampleNearLatLng)
+
+        verify(loadingObserver).onChanged(false)
+        verify(venuesObserver).onChanged(sampleVenues)
+
+
+    }
+
+
+
+    @ExperimentalCoroutinesApi
+    @Test
+    fun `should hide loading on failure`() = rule.dispatcher.runBlockingTest {
+
+        val result = Result.failure<SocketTimeoutException>(SocketTimeoutException())
+
+        val channel = Channel<Result<Throwable>>()
+        val flow = channel.consumeAsFlow()
+
+        doReturn(flow)
+            .`when`(fsRepository)
+            .searchVenues(sampleLatLng)
+
+        launch {
+            channel.send(result)
+        }
+
+        viewModel.onUserViewPortUpdated(sampleLatLngBounds)
+
+        verify(fsRepository, times(1)).searchVenues(sampleLatLng)
+
+
+        verify(loadingObserver).onChanged(false)
     }
 
 
