@@ -22,7 +22,7 @@ class MapsViewModel @Inject constructor(private val fsRepository: FSRepository) 
     val venues: LiveData<List<Venue>> = _venues
 
 
-    private val _isLoading = MutableLiveData(false)
+    private val _isLoading = MutableLiveData(true)
     val isLoading: LiveData<Boolean> = _isLoading
 
     fun onUserViewPortUpdated(bounds: LatLngBounds) {
@@ -32,14 +32,20 @@ class MapsViewModel @Inject constructor(private val fsRepository: FSRepository) 
 
 
     private fun filterVenues(bounds: LatLngBounds) {
-        _venues.value = allVenues.filter {
+        val inBoundsVenues = allVenues.filter { venue ->
             bounds.contains(
                 LatLng(
-                    it.location?.lat!!,
-                    it.location.lng!!
+                    venue.location?.lat!!,
+                    venue.location.lng!!
                 )
             )
         }
+
+        if (inBoundsVenues.isNotEmpty()) {
+            _venues.value = inBoundsVenues
+        }
+
+
     }
 
     private fun searchVenues(bounds: LatLngBounds) {
@@ -59,6 +65,7 @@ class MapsViewModel @Inject constructor(private val fsRepository: FSRepository) 
 
                         result.isFailure -> {
                             _isLoading.value = false
+                            result.exceptionOrNull()?.printStackTrace()
                         }
                     }
                 }
