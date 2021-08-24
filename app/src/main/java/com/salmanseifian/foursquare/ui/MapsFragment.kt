@@ -41,10 +41,12 @@ class MapsFragment : Fragment(R.layout.fragment_maps), OnMapReadyCallback {
     private lateinit var locationCallback: LocationCallback
 
 
+    @SuppressLint("MissingPermission")
     private val requestMultiplePermissions =
         registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
             if (permissions[ACCESS_FINE_LOCATION] == true && permissions[ACCESS_COARSE_LOCATION] == true) {
                 startLocationUpdates()
+                googleMap.isMyLocationEnabled = true
             } else {
                 requestPermissions()
             }
@@ -89,12 +91,11 @@ class MapsFragment : Fragment(R.layout.fragment_maps), OnMapReadyCallback {
         }
     }
 
-    @SuppressLint("MissingPermission")
+
     override fun onMapReady(map: GoogleMap) {
         googleMap = map
 
         googleMap.uiSettings.isMyLocationButtonEnabled = true
-        googleMap.isMyLocationEnabled = true
 
         googleMap.setOnCameraIdleListener {
             viewModel.onUserViewPortUpdated(map.projection.visibleRegion.latLngBounds)
