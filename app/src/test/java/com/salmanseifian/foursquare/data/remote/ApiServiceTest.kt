@@ -1,6 +1,6 @@
-package com.salmanseifian.foursquare
+package com.salmanseifian.foursquare.data.remote
 
-import com.salmanseifian.foursquare.data.remote.ApiService
+import com.salmanseifian.foursquare.sampleLatLng
 import kotlinx.coroutines.runBlocking
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor

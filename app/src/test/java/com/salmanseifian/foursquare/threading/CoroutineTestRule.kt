@@ -1,4 +1,4 @@
-package com.salmanseifian.foursquare
+package com.salmanseifian.foursquare.threading
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.test.TestCoroutineDispatcher

@@ -6,6 +6,7 @@ import com.salmanseifian.foursquare.*
 import com.salmanseifian.foursquare.data.repository.VenueRepository
 import com.salmanseifian.foursquare.model.SearchVenuesResponse
 import com.salmanseifian.foursquare.model.Venue
+import com.salmanseifian.foursquare.threading.CoroutineTestRule
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.consumeAsFlow
