@@ -7,4 +7,6 @@ interface VenueRepository {
 
     fun searchVenues(ll: String): Flow<Result<SearchVenuesResponse>>
 
+    fun searchVenuesRetryIfFailed(ll: String): Flow<Result<SearchVenuesResponse>>
+
 }

@@ -4,6 +4,7 @@ import com.salmanseifian.foursquare.data.remote.ApiService
 import com.salmanseifian.foursquare.sampleLatLng
 import com.salmanseifian.foursquare.sampleResponse
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.TestCoroutineDispatcher
 import kotlinx.coroutines.test.runBlockingTest
@@ -59,6 +60,58 @@ class VenueRepositoryImpTest {
             }
 
         }
+
+
+    @Test
+    fun `should retry and all retries failed`() = testDispatcher.runBlockingTest {
+
+        val apiService = mock<ApiService> {
+            onBlocking { searchVenues(ll = sampleLatLng) } doAnswer {
+                throw IOException()
+            }
+        }
+
+        val repository = VenueRepositoryImp(apiService, testDispatcher)
+
+        val flow = repository.searchVenuesRetryIfFailed(sampleLatLng)
+
+
+        flow.collect { result ->
+            result.isFailure.shouldBeTrue()
+        }
+
+    }
+
+
+    @Test
+    fun `should retry and second retry succeeded`() = testDispatcher.runBlockingTest {
+
+        var throwError = true
+
+        val apiService = mock<ApiService> {
+            onBlocking { searchVenues(ll = sampleLatLng) } doAnswer {
+                if (throwError) throw IOException() else sampleResponse()
+            }
+        }
+
+        val repository = VenueRepositoryImp(apiService, testDispatcher)
+
+        val flow = repository.searchVenuesRetryIfFailed(sampleLatLng)
+
+
+        launch {
+            flow.collect { result ->
+                result.isSuccess.shouldBeTrue()
+            }
+        }
+
+        advanceTimeBy(DELAY_ONE_SECOND)
+
+        throwError = false
+        advanceTimeBy(DELAY_ONE_SECOND)
+
+
+    }
 
 
 }
