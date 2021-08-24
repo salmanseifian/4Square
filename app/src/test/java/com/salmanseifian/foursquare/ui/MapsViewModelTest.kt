@@ -2,7 +2,6 @@ package com.salmanseifian.foursquare.ui
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.Observer
-import com.google.gson.Gson
 import com.salmanseifian.foursquare.*
 import com.salmanseifian.foursquare.data.repository.FSRepository
 import com.salmanseifian.foursquare.model.SearchVenuesResponse
@@ -50,7 +49,7 @@ class MapsViewModelTest {
     @Test
     fun `should emit venues on success`() = rule.dispatcher.runBlockingTest {
 
-        val result = Result.success(response())
+        val result = Result.success(sampleResponse())
 
         val channel = Channel<Result<SearchVenuesResponse>>()
         val flow = channel.consumeAsFlow()
@@ -77,7 +76,7 @@ class MapsViewModelTest {
     @Test
     fun `should emit from cache on inbounds location`() = rule.dispatcher.runBlockingTest {
 
-        val result = Result.success(response())
+        val result = Result.success(sampleResponse())
 
         val channel = Channel<Result<SearchVenuesResponse>>()
         val flow = channel.consumeAsFlow()
@@ -134,15 +133,4 @@ class MapsViewModelTest {
 
         verify(loadingObserver).onChanged(false)
     }
-
-
-    private fun response(): SearchVenuesResponse {
-        val gson = Gson()
-        return gson.fromJson(
-            sampleJsonResponse,
-            SearchVenuesResponse::class.java
-        )
-    }
-
-
 }

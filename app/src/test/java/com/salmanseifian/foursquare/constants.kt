@@ -2,6 +2,7 @@ package com.salmanseifian.foursquare
 
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
+import com.google.gson.Gson
 import com.salmanseifian.foursquare.model.*
 
 val sampleLatLng = "35.77488878596024,51.40009805560112"
@@ -2391,3 +2392,12 @@ val sampleVenues = arrayListOf(
         null
     )
 )
+
+
+fun sampleResponse(): SearchVenuesResponse {
+    val gson = Gson()
+    return gson.fromJson(
+        sampleJsonResponse,
+        SearchVenuesResponse::class.java
+    )
+}
