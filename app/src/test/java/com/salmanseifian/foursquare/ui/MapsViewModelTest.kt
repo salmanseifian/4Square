@@ -3,7 +3,7 @@ package com.salmanseifian.foursquare.ui
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.Observer
 import com.salmanseifian.foursquare.*
-import com.salmanseifian.foursquare.data.repository.FSRepository
+import com.salmanseifian.foursquare.data.repository.VenueRepository
 import com.salmanseifian.foursquare.model.SearchVenuesResponse
 import com.salmanseifian.foursquare.model.Venue
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -28,7 +28,7 @@ class MapsViewModelTest {
     @get:Rule
     val instantExecutorRule = InstantTaskExecutorRule()
 
-    private val fsRepository = mock<FSRepository>()
+    private val fsRepository = mock<VenueRepository>()
 
     private val venuesObserver = mock<Observer<List<Venue>>>()
     private val loadingObserver = mock<Observer<Boolean>>()

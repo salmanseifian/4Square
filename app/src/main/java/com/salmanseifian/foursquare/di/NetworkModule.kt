@@ -1,6 +1,6 @@
 package com.salmanseifian.foursquare.di
 
-import com.salmanseifian.foursquare.data.remote.FSService
+import com.salmanseifian.foursquare.data.remote.ApiService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -18,13 +18,13 @@ object NetworkModule {
 
     @Singleton
     @Provides
-    fun provideApiService(retrofit: Retrofit): FSService =
-        retrofit.create(FSService::class.java)
+    fun provideApiService(retrofit: Retrofit): ApiService =
+        retrofit.create(ApiService::class.java)
 
     @Singleton
     @Provides
     fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit = Retrofit.Builder()
-        .baseUrl(FSService.BASE_URL)
+        .baseUrl(ApiService.BASE_URL)
         .client(okHttpClient)
         .addConverterFactory(GsonConverterFactory.create())
         .build()

@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
-import com.salmanseifian.foursquare.data.repository.FSRepository
+import com.salmanseifian.foursquare.data.repository.VenueRepository
 import com.salmanseifian.foursquare.model.Venue
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collect
@@ -14,7 +14,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class MapsViewModel @Inject constructor(private val fsRepository: FSRepository) : ViewModel() {
+class MapsViewModel @Inject constructor(private val venueRepository: VenueRepository) : ViewModel() {
 
     val allVenues = mutableSetOf<Venue>()
 
@@ -51,7 +51,7 @@ class MapsViewModel @Inject constructor(private val fsRepository: FSRepository) 
     private fun searchVenues(bounds: LatLngBounds) {
         val ll = bounds.center.latitude.toString() + "," + bounds.center.longitude.toString()
         viewModelScope.launch {
-            fsRepository.searchVenues(ll)
+            venueRepository.searchVenues(ll)
                 .collect { result ->
                     when {
                         result.isSuccess -> {

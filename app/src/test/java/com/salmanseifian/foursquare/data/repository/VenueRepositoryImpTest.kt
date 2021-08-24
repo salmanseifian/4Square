@@ -1,6 +1,6 @@
 package com.salmanseifian.foursquare.data.repository
 
-import com.salmanseifian.foursquare.data.remote.FSService
+import com.salmanseifian.foursquare.data.remote.ApiService
 import com.salmanseifian.foursquare.sampleLatLng
 import com.salmanseifian.foursquare.sampleResponse
 import kotlinx.coroutines.flow.collect
@@ -15,7 +15,7 @@ import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import java.io.IOException
 
-class FSRepositoryImpTest {
+class VenueRepositoryImpTest {
 
 
     private val testDispatcher = TestCoroutineDispatcher()
@@ -24,11 +24,11 @@ class FSRepositoryImpTest {
     @Test
     fun `should get venues on success`() = runBlocking {
 
-        val apiService = mock<FSService> {
+        val apiService = mock<ApiService> {
             onBlocking { searchVenues(ll = sampleLatLng) } doReturn sampleResponse()
         }
 
-        val repository = FSRepositoryImp(apiService, testDispatcher)
+        val repository = VenueRepositoryImp(apiService, testDispatcher)
 
         val flow = repository.searchVenues(sampleLatLng)
 
@@ -43,13 +43,13 @@ class FSRepositoryImpTest {
     fun `should throw error for search venues if any exception is thrown`() =
         testDispatcher.runBlockingTest {
 
-            val apiService = mock<FSService> {
+            val apiService = mock<ApiService> {
                 onBlocking { searchVenues(ll = sampleLatLng) } doAnswer {
                     throw IOException()
                 }
             }
 
-            val repository = FSRepositoryImp(apiService, testDispatcher)
+            val repository = VenueRepositoryImp(apiService, testDispatcher)
 
             val flow = repository.searchVenues(sampleLatLng)
 

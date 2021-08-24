@@ -1,7 +1,7 @@
 package com.salmanseifian.foursquare.di
 
-import com.salmanseifian.foursquare.data.repository.FSRepository
-import com.salmanseifian.foursquare.data.repository.FSRepositoryImp
+import com.salmanseifian.foursquare.data.repository.VenueRepository
+import com.salmanseifian.foursquare.data.repository.VenueRepositoryImp
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -15,6 +15,6 @@ abstract class RepositoryModule {
 
     @ActivityRetainedScoped
     @Binds
-    abstract fun bindRepository(impl: FSRepositoryImp): FSRepository
+    abstract fun bindRepository(impl: VenueRepositoryImp): VenueRepository
 
 }

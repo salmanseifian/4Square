@@ -1,6 +1,6 @@
 package com.salmanseifian.foursquare
 
-import com.salmanseifian.foursquare.data.remote.FSService
+import com.salmanseifian.foursquare.data.remote.ApiService
 import kotlinx.coroutines.runBlocking
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -16,7 +16,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 @RunWith(JUnit4::class)
 class ApiServiceTest {
 
-    private lateinit var fsService: FSService
+    private lateinit var apiService: ApiService
 
 
     @Before
@@ -24,19 +24,19 @@ class ApiServiceTest {
         val okHttpClient = OkHttpClient.Builder()
         okHttpClient.addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
 
-        fsService = Retrofit.Builder()
-            .baseUrl(FSService.BASE_URL)
+        apiService = Retrofit.Builder()
+            .baseUrl(ApiService.BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .client(okHttpClient.build())
             .build()
-            .create(FSService::class.java)
+            .create(ApiService::class.java)
     }
 
 
     @Test
     fun searchVenues() {
         val response = runBlocking {
-            fsService.searchVenues(ll = sampleLatLng)
+            apiService.searchVenues(ll = sampleLatLng)
         }
         Assert.assertEquals(200, response.meta?.code)
     }
