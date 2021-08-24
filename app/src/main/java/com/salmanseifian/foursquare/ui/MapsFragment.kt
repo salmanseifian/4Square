@@ -27,8 +27,8 @@ import dagger.hilt.android.AndroidEntryPoint
 class MapsFragment : Fragment(R.layout.fragment_maps), OnMapReadyCallback {
 
     private val viewModel: MapsViewModel by activityViewModels()
-    private var mapView: MapView? = null
-    private lateinit var map: GoogleMap
+    private lateinit var mapView: MapView
+    private lateinit var googleMap: GoogleMap
 
     private lateinit var fusedLocationClient: FusedLocationProviderClient
 
@@ -57,7 +57,7 @@ class MapsFragment : Fragment(R.layout.fragment_maps), OnMapReadyCallback {
         val binding = FragmentMapsBinding.bind(view)
         binding.viewModel = viewModel
 
-        val mapView = binding.mapView
+        mapView = binding.mapView
         mapView.onCreate(savedInstanceState)
         mapView.onResume()
 
@@ -66,9 +66,9 @@ class MapsFragment : Fragment(R.layout.fragment_maps), OnMapReadyCallback {
         mapView.getMapAsync(this)
 
         viewModel.venues.observe(viewLifecycleOwner, {
-            map.clear()
+            googleMap.clear()
             it.forEach { venue ->
-                val venueMarker = map.addMarker(
+                val venueMarker = googleMap.addMarker(
                     MarkerOptions()
                         .title(venue.name)
                         .position(LatLng(venue.location?.lat!!, venue.location.lng!!))
@@ -89,14 +89,18 @@ class MapsFragment : Fragment(R.layout.fragment_maps), OnMapReadyCallback {
         }
     }
 
+    @SuppressLint("MissingPermission")
     override fun onMapReady(map: GoogleMap) {
-        this.map = map
+        googleMap = map
 
-        map.setOnCameraIdleListener {
+        googleMap.uiSettings.isMyLocationButtonEnabled = true
+        googleMap.isMyLocationEnabled = true
+
+        googleMap.setOnCameraIdleListener {
             viewModel.onUserViewPortUpdated(map.projection.visibleRegion.latLngBounds)
         }
 
-        map.setOnMarkerClickListener {
+        googleMap.setOnMarkerClickListener {
             findNavController().navigate(
                 MapsFragmentDirections.actionMapsFragmentToVenueDetailsFragment(
                     it.tag as String
@@ -147,7 +151,7 @@ class MapsFragment : Fragment(R.layout.fragment_maps), OnMapReadyCallback {
 
 
     private fun onNewLocation(location: Location) {
-        map.moveCamera(
+        googleMap.moveCamera(
             CameraUpdateFactory.newLatLngZoom(
                 LatLng(
                     location.latitude,
@@ -182,23 +186,23 @@ class MapsFragment : Fragment(R.layout.fragment_maps), OnMapReadyCallback {
 
     override fun onResume() {
         super.onResume()
-        mapView?.onResume()
+        mapView.onResume()
     }
 
     override fun onPause() {
         super.onPause()
-        mapView?.onPause()
+        mapView.onPause()
         stopLocationUpdates()
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        mapView?.onDestroy()
+        mapView.onDestroy()
     }
 
     override fun onLowMemory() {
         super.onLowMemory()
-        mapView?.onLowMemory()
+        mapView.onLowMemory()
     }
 
     private fun checkPermissions(): Boolean {
