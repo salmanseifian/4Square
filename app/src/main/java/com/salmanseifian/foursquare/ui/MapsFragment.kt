@@ -58,6 +58,7 @@ class MapsFragment : Fragment(R.layout.fragment_maps), OnMapReadyCallback {
 
         val binding = FragmentMapsBinding.bind(view)
         binding.viewModel = viewModel
+        binding.lifecycleOwner = this
 
         mapView = binding.mapView
         mapView.onCreate(savedInstanceState)
@@ -131,15 +132,13 @@ class MapsFragment : Fragment(R.layout.fragment_maps), OnMapReadyCallback {
             override fun onLocationResult(locationResult: LocationResult?) {
                 locationResult ?: return
                 onNewLocation(locationResult.lastLocation)
+                stopLocationUpdates()
             }
         }
     }
 
     private fun createLocationRequest() {
         locationRequest = LocationRequest.create().apply {
-            interval = UPDATE_INTERVAL
-            fastestInterval = FASTEST_UPDATE_INTERVAL
-            maxWaitTime = MAX_WAIT_TIME
             priority = LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY
         }
     }
@@ -225,8 +224,5 @@ class MapsFragment : Fragment(R.layout.fragment_maps), OnMapReadyCallback {
         private const val DEFAULT_ZOOM = 15f
 
         private const val REQUEST_CHECK_SETTINGS = 102
-        private const val UPDATE_INTERVAL = (10 * 1000).toLong()
-        private const val FASTEST_UPDATE_INTERVAL = (UPDATE_INTERVAL / 2)
-        private const val MAX_WAIT_TIME = UPDATE_INTERVAL * 3
     }
 }

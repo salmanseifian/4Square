@@ -14,7 +14,8 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class MapsViewModel @Inject constructor(private val venueRepository: VenueRepository) : ViewModel() {
+class MapsViewModel @Inject constructor(private val venueRepository: VenueRepository) :
+    ViewModel() {
 
     val allVenues = mutableSetOf<Venue>()
 
@@ -25,6 +26,7 @@ class MapsViewModel @Inject constructor(private val venueRepository: VenueReposi
     private val _isLoading = MutableLiveData(true)
     val isLoading: LiveData<Boolean> = _isLoading
 
+
     fun onUserViewPortUpdated(bounds: LatLngBounds) {
         filterVenues(bounds)
         searchVenues(bounds)
@@ -32,7 +34,7 @@ class MapsViewModel @Inject constructor(private val venueRepository: VenueReposi
 
 
     private fun filterVenues(bounds: LatLngBounds) {
-        val inBoundsVenues = allVenues.filter { venue ->
+        _venues.value = allVenues.filter { venue ->
             bounds.contains(
                 LatLng(
                     venue.location?.lat!!,
@@ -40,15 +42,10 @@ class MapsViewModel @Inject constructor(private val venueRepository: VenueReposi
                 )
             )
         }
-
-        if (inBoundsVenues.isNotEmpty()) {
-            _venues.value = inBoundsVenues
-        }
-
-
     }
 
     private fun searchVenues(bounds: LatLngBounds) {
+        _isLoading.value = true
         val ll = bounds.center.latitude.toString() + "," + bounds.center.longitude.toString()
         viewModelScope.launch {
             venueRepository.searchVenues(ll)
@@ -56,7 +53,6 @@ class MapsViewModel @Inject constructor(private val venueRepository: VenueReposi
                     when {
                         result.isSuccess -> {
                             _isLoading.value = false
-
                             result.getOrNull()?.let {
                                 allVenues.addAll(it.response?.venues ?: emptyList())
                                 filterVenues(bounds)

@@ -15,7 +15,7 @@ interface ApiService {
         @Query("client_secret") clientSecret: String = CLIENT_SECRET,
         @Query("v") version: String = VERSION,
         @Query("categoryId") categoryId: String = FOOD_CATEGORY_ID,
-        @Query("ll") ll: String
+        @Query("ll") latLng: String
     ): SearchVenuesResponse
 
 
