@@ -17,4 +17,11 @@ Before running the app make sure you have added your keys to the app:
 
 In the keys.kt file your need to add two keys that relates to the foursquare api.
 
+```
+package com.salmanseifian.foursquare.utils
+
+const val CLIENT_ID = ""
+const val CLIENT_SECRET = ""
+```
+
 In the local.properties you need to add map api key.
