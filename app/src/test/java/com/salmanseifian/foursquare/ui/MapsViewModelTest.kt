@@ -98,9 +98,9 @@ class MapsViewModelTest {
         verify(loadingObserver).onChanged(false)
         verify(venuesObserver).onChanged(sampleVenues)
 
-        viewModel.onUserViewPortUpdated(sampleNearLatLngBounds)
+        viewModel.onUserViewPortUpdated(sampleOverlappingLatLngBounds)
 
-        verify(fsRepository, times(1)).searchVenues(sampleNearLatLng)
+        verify(fsRepository, times(1)).searchVenues(sampleOverlappingLatLng)
 
         verify(loadingObserver).onChanged(false)
         verify(venuesObserver).onChanged(sampleVenues)

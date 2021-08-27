@@ -41,7 +41,7 @@ class MapsViewModel @Inject constructor(private val venueRepository: VenueReposi
                     venue.location.lng!!
                 )
             )
-        }
+        }.distinct()
     }
 
     private fun searchVenues(bounds: LatLngBounds) {

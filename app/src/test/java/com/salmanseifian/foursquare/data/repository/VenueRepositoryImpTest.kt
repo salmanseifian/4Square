@@ -26,7 +26,7 @@ class VenueRepositoryImpTest {
     fun `should get venues on success`() = runBlocking {
 
         val apiService = mock<ApiService> {
-            onBlocking { searchVenues(ll = sampleLatLng) } doReturn sampleResponse()
+            onBlocking { searchVenues(latLng = sampleLatLng) } doReturn sampleResponse()
         }
 
         val repository = VenueRepositoryImp(apiService, testDispatcher)
@@ -45,7 +45,7 @@ class VenueRepositoryImpTest {
         testDispatcher.runBlockingTest {
 
             val apiService = mock<ApiService> {
-                onBlocking { searchVenues(ll = sampleLatLng) } doAnswer {
+                onBlocking { searchVenues(latLng = sampleLatLng) } doAnswer {
                     throw IOException()
                 }
             }
@@ -62,26 +62,6 @@ class VenueRepositoryImpTest {
         }
 
 
-    @Test
-    fun `should retry and all retries failed`() = testDispatcher.runBlockingTest {
-
-        val apiService = mock<ApiService> {
-            onBlocking { searchVenues(ll = sampleLatLng) } doAnswer {
-                throw IOException()
-            }
-        }
-
-        val repository = VenueRepositoryImp(apiService, testDispatcher)
-
-        val flow = repository.searchVenuesRetryIfFailed(sampleLatLng)
-
-
-        flow.collect { result ->
-            result.isFailure.shouldBeTrue()
-        }
-
-    }
-
 
     @Test
     fun `should retry and second retry succeeded`() = testDispatcher.runBlockingTest {
@@ -89,14 +69,14 @@ class VenueRepositoryImpTest {
         var throwError = true
 
         val apiService = mock<ApiService> {
-            onBlocking { searchVenues(ll = sampleLatLng) } doAnswer {
+            onBlocking { searchVenues(latLng = sampleLatLng) } doAnswer {
                 if (throwError) throw IOException() else sampleResponse()
             }
         }
 
         val repository = VenueRepositoryImp(apiService, testDispatcher)
 
-        val flow = repository.searchVenuesRetryIfFailed(sampleLatLng)
+        val flow = repository.searchVenues(sampleLatLng)
 
 
         launch {

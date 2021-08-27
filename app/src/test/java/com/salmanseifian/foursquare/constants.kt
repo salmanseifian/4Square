@@ -5,7 +5,7 @@ import com.google.android.gms.maps.model.LatLngBounds
 import com.google.gson.Gson
 import com.salmanseifian.foursquare.model.*
 
-val sampleLatLng = "35.77488878596024,51.40009805560112"
+const val sampleLatLng = "35.77488878596024,51.40009805560112"
 
 val sampleLatLngBounds = LatLngBounds(
     LatLng(35.76587076681244, 51.39237329363824),
@@ -14,9 +14,9 @@ val sampleLatLngBounds = LatLngBounds(
     )
 )
 
-val sampleNearLatLng = "35.77606198344144,51.39690387994051"
+const val sampleOverlappingLatLng = "35.77606198344144,51.39690387994051"
 
-val sampleNearLatLngBounds = LatLngBounds(
+val sampleOverlappingLatLngBounds = LatLngBounds(
     LatLng(35.76704409734948, 51.38917911797762),
     LatLng(
         35.78507986953339, 51.4046286419034

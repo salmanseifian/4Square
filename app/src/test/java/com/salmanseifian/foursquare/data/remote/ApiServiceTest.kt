@@ -42,14 +42,10 @@ class ApiServiceTest {
 
         enqueueResponse("venues.json")
 
-        val response = apiService.searchVenues(ll = sampleLatLng)
-        
+        val response = apiService.searchVenues(latLng = sampleLatLng)
+
         assertEquals(200, response.meta?.code)
-        assertNotEquals(null, response.response)
-        assertNotEquals(null, response.response?.venues)
-        
-        
-        
+        assertEquals(20, response.response?.venues?.size)
     }
 
 
