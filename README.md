@@ -25,3 +25,5 @@ const val CLIENT_SECRET = ""
 ```
 
 In the local.properties you need to add map api key.
+
+`MAPS_API_KEY=?`
